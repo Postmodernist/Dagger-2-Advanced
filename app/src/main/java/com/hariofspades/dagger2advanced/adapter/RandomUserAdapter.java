@@ -20,11 +20,13 @@ import butterknife.ButterKnife;
 
 public class RandomUserAdapter extends RecyclerView.Adapter<RandomUserAdapter.RandomUserViewHolder> {
 
+  private final Picasso picasso;
   private List<Result> results;
   private Context context;
 
-  public RandomUserAdapter(Context context) {
+  public RandomUserAdapter(Context context, Picasso picasso) {
     this.context = context;
+    this.picasso = picasso;
   }
 
   @NonNull
@@ -46,7 +48,7 @@ public class RandomUserAdapter extends RecyclerView.Adapter<RandomUserAdapter.Ra
     final String largePicture = result.getPicture().getLarge();
 
     holder.textView.setText(context.getString(R.string.user_name_format, firstName, lastName));
-    Picasso.get().load(largePicture).into(holder.imageView);
+    picasso.load(largePicture).into(holder.imageView);
   }
 
   @Override

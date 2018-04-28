@@ -11,10 +11,16 @@ import com.google.gson.GsonBuilder;
 import com.hariofspades.dagger2advanced.adapter.RandomUserAdapter;
 import com.hariofspades.dagger2advanced.interfaces.RandomUsersApi;
 import com.hariofspades.dagger2advanced.model.RandomUsers;
+import com.squareup.picasso.OkHttp3Downloader;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
+
+import butterknife.BindInt;
 import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
@@ -29,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
   @BindString(R.string.base_url)
   String baseUrl;
 
+  @BindInt(R.integer.cache_size)
+  int cacheSize;
+
   @BindView(R.id.recyclerView)
   RecyclerView recyclerView;
 
@@ -41,14 +50,15 @@ public class MainActivity extends AppCompatActivity {
     setContentView(R.layout.activity_main);
     ButterKnife.bind(this);
 
-    recyclerView.setLayoutManager(new LinearLayoutManager(this));
-    randomUserAdapter = new RandomUserAdapter(this);
-    recyclerView.setAdapter(randomUserAdapter);
-
     GsonBuilder gsonBuilder = new GsonBuilder();
     Gson gson = gsonBuilder.create();
 
     Timber.plant(new Timber.DebugTree());
+
+    File cacheFile = new File(getCacheDir(), "HttpCache");
+    Cache cache = new Cache(cacheFile, cacheSize);
+    //noinspection ResultOfMethodCallIgnored
+    cacheFile.mkdirs();
 
     HttpLoggingInterceptor httpLoggingInterceptor = new
         HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
@@ -60,8 +70,12 @@ public class MainActivity extends AppCompatActivity {
     httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
     OkHttpClient okHttpClient = new OkHttpClient().newBuilder()
+        .cache(cache)
         .addInterceptor(httpLoggingInterceptor)
         .build();
+
+    OkHttp3Downloader okHttp3Downloader = new OkHttp3Downloader(okHttpClient);
+    Picasso picasso = new Picasso.Builder(this).downloader(okHttp3Downloader).build();
 
     retrofit = new Retrofit.Builder()
         .client(okHttpClient)
@@ -69,8 +83,14 @@ public class MainActivity extends AppCompatActivity {
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build();
 
+    // Setup RecyclerView
+    recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    randomUserAdapter = new RandomUserAdapter(this, picasso);
+    recyclerView.setAdapter(randomUserAdapter);
     populateUsers();
   }
+
+  // ---
 
   private void populateUsers() {
     Call<RandomUsers> randomUsersCall = getRandomUserService().getRandomUsers(10);
