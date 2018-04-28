@@ -1,4 +1,4 @@
-package com.hariofspades.dagger2advanced.interfaces;
+package com.hariofspades.dagger2advanced.api;
 
 import com.hariofspades.dagger2advanced.model.RandomUsers;
 
