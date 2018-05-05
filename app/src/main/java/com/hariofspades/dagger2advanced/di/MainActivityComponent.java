@@ -5,13 +5,11 @@ import com.hariofspades.dagger2advanced.activities.MainActivity;
 import dagger.BindsInstance;
 import dagger.Component;
 
-@Component(
-    modules = MainActivityModule.class,
-    dependencies = ApplicationComponent.class)
+@Component(modules = MainActivityModule.class, dependencies = ApplicationComponent.class)
 @MainActivityScope
 public interface MainActivityComponent {
 
-  void inject(MainActivity mainActivity);
+  void inject(MainActivity activity);
 
   @Component.Builder
   interface Builder {

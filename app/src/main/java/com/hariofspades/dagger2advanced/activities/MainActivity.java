@@ -11,8 +11,6 @@ import com.hariofspades.dagger2advanced.RandomUsersApplication;
 import com.hariofspades.dagger2advanced.adapter.RandomUserAdapter;
 import com.hariofspades.dagger2advanced.api.RandomUsersApi;
 import com.hariofspades.dagger2advanced.di.DaggerMainActivityComponent;
-import com.hariofspades.dagger2advanced.di.MainActivityComponent;
-import com.hariofspades.dagger2advanced.di.MainActivityModule;
 import com.hariofspades.dagger2advanced.model.RandomUsers;
 
 import javax.inject.Inject;
@@ -52,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
   private void configureDagger() {
     DaggerMainActivityComponent.builder()
         .activity(this)
-        .applicationComponent(RandomUsersApplication.getApplicationComponent(this))
+        .applicationComponent(((RandomUsersApplication) getApplication()).getApplicationComponent())
         .build()
         .inject(this);
   }
