@@ -7,9 +7,9 @@ import javax.inject.Singleton;
 
 import dagger.Component;
 
-@Component(modules = {RandomUsersModule.class, PicassoModule.class})
+@Component(modules = {ApplicationModule.class, PicassoModule.class})
 @Singleton
-public interface RandomUsersComponent {
+public interface ApplicationComponent {
 
   RandomUsersApi randomUsersApi();
 

@@ -28,11 +28,13 @@ class OkHttpClientModule {
   }
 
   @Provides
+  @Singleton
   static Cache cache(File cacheFile, @Named("cache size") int cacheSize) {
     return new Cache(cacheFile, cacheSize);
   }
 
   @Provides
+  @Singleton
   static File file(@AplicationContext Context context) {
     File cacheFile = new File(context.getCacheDir(), "HttpCache");
     //noinspection ResultOfMethodCallIgnored
@@ -41,6 +43,7 @@ class OkHttpClientModule {
   }
 
   @Provides
+  @Singleton
   static HttpLoggingInterceptor httpLoggingInterceptor() {
     HttpLoggingInterceptor httpLoggingInterceptor = new
         HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {

@@ -1,7 +1,5 @@
 package com.hariofspades.dagger2advanced.di;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.hariofspades.dagger2advanced.api.RandomUsersApi;
 
 import javax.inject.Named;
@@ -14,7 +12,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 @Module(includes = OkHttpClientModule.class)
-class RandomUsersModule {
+class ApplicationModule {
 
   @Provides
   @Singleton
@@ -24,17 +22,11 @@ class RandomUsersModule {
 
   @Provides
   @Singleton
-  static Retrofit retrofit(OkHttpClient okHttpClient, @Named("base url") String baseUrl, Gson gson) {
+  static Retrofit retrofit(OkHttpClient okHttpClient, @Named("base url") String baseUrl) {
     return new Retrofit.Builder()
         .client(okHttpClient)
         .baseUrl(baseUrl)
-        .addConverterFactory(GsonConverterFactory.create(gson))
+        .addConverterFactory(GsonConverterFactory.create())
         .build();
-  }
-
-  @Provides
-  static Gson gson() {
-    GsonBuilder gsonBuilder = new GsonBuilder();
-    return gsonBuilder.create();
   }
 }

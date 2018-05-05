@@ -1,4 +1,4 @@
-package com.hariofspades.dagger2advanced;
+package com.hariofspades.dagger2advanced.activities;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -6,13 +6,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.hariofspades.dagger2advanced.R;
+import com.hariofspades.dagger2advanced.RandomUsersApplication;
 import com.hariofspades.dagger2advanced.adapter.RandomUserAdapter;
 import com.hariofspades.dagger2advanced.api.RandomUsersApi;
-import com.hariofspades.dagger2advanced.di.ContextModule;
-import com.hariofspades.dagger2advanced.di.DaggerRandomUsersComponent;
-import com.hariofspades.dagger2advanced.di.RandomUsersComponent;
+import com.hariofspades.dagger2advanced.di.DaggerMainActivityComponent;
+import com.hariofspades.dagger2advanced.di.MainActivityComponent;
+import com.hariofspades.dagger2advanced.di.MainActivityModule;
 import com.hariofspades.dagger2advanced.model.RandomUsers;
-import com.squareup.picasso.Picasso;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -26,33 +29,33 @@ public class MainActivity extends AppCompatActivity {
   @BindView(R.id.recyclerView)
   RecyclerView recyclerView;
 
-  private RandomUserAdapter randomUserAdapter;
-  private RandomUsersApi randomUsersApi;
+  @Inject
+  RandomUserAdapter randomUserAdapter;
+
+  @Inject
+  RandomUsersApi randomUsersApi;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
+    configureDagger();
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     ButterKnife.bind(this);
 
-    Timber.plant(new Timber.DebugTree());
-
-    RandomUsersComponent randomUsersComponent = DaggerRandomUsersComponent.builder()
-        .contextModule(new ContextModule(this))
-        .build();
-
-    Picasso picasso = randomUsersComponent.picasso();
-    randomUsersApi = randomUsersComponent.randomUsersApi();
-
     // Setup RecyclerView
     recyclerView.setLayoutManager(new LinearLayoutManager(this));
-    randomUserAdapter = new RandomUserAdapter(this, picasso);
     recyclerView.setAdapter(randomUserAdapter);
 
     populateUsers();
   }
 
-  // ---
+  private void configureDagger() {
+    DaggerMainActivityComponent.builder()
+        .activity(this)
+        .applicationComponent(RandomUsersApplication.getApplicationComponent(this))
+        .build()
+        .inject(this);
+  }
 
   private void populateUsers() {
     Call<RandomUsers> randomUsersCall = randomUsersApi.getRandomUsers(10);

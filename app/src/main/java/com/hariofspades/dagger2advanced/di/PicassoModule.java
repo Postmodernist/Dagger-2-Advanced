@@ -23,6 +23,7 @@ class PicassoModule {
   }
 
   @Provides
+  @Singleton
   static OkHttp3Downloader okHttp3Downloader(OkHttpClient okHttpClient) {
     return new OkHttp3Downloader(okHttpClient);
   }
