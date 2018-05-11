@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Dagger2Advanced</string>
+    <string name="app_name">DaggerAdvanced</string>
     <string name="user_name_format">%s %s</string>
     <string name="base_url">https://randomuser.me/</string>
 </resources>
